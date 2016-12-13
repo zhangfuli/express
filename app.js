@@ -1,46 +1,27 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-
 var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', index);
-app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+var http = require('http').Server(app);
+var url = require('url');
+//监听服务端口
+app.listen(8080,function(){
+	console.log('started');
 });
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.get('/',function(req,res){
+	res.send("hello world");
 });
-
-module.exports = app;
+app.get('/find', function(req ,res ){
+	console.log(req);   
+	var query = req.query;
+	res.send('Finding Book: Author :'+query.author+
+			'Title :' + query.title );
+});
+//运用正则匹配
+app.get(/^\/book\/(\w+)\:(\w+)?$/,function(req ,res){
+	console.log(req);
+	res.send('Get book: Chaper : '+ req.params[0]+
+		'Page : '+ req.params[1]);
+})
+app.get('/user/:userid' , function (req ,res){
+	console.log(req);
+	res.send("Get user :" +req.params['userid']);
+});
