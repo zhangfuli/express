@@ -20,8 +20,12 @@ app.get(/^\/book\/(\w+)\:(\w+)?$/,function(req ,res){
 	console.log(req);
 	res.send('Get book: Chaper : '+ req.params[0]+
 		'Page : '+ req.params[1]);
-})
+});
 app.get('/user/:userid' , function (req ,res){
 	console.log(req);
 	res.send("Get user :" +req.params['userid']);
+});
+app.get('/error',function(req ,res ){
+	res.status(400);
+	res.send('This is a bad request.');
 });
