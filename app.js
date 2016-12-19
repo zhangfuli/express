@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var url = require('url');
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
 //监听服务端口
 app.listen(8080,function(){
 	console.log('started');
@@ -29,3 +31,9 @@ app.get('/error',function(req ,res ){
 	res.status(400);
 	res.send('This is a bad request.');
 });
+app.get('/index',function(req ,res ){
+	res.sendFile(__dirname+'/public/index.html');
+});
+app.get('/google',function(req ,res ){
+	res.redirect('http://google.com');
+})
