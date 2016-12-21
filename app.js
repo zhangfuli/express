@@ -29,7 +29,6 @@ app.get(/^\/book\/(\w+)\:(\w+)?$/,function(req ,res){
 		'Page : '+ req.params[1]);
 });
 app.get('/user/:userid' , function (req ,res){
-	console.log(req);
 	res.send("Get user :" +req.params['userid']);
 });
 app.get('/error',function(req ,res ){
@@ -41,10 +40,12 @@ app.get('/index',function(req ,res ){
 });
 app.get('/google',function(req ,res ){
 	res.redirect('http://google.com');
-})
+});
+
 
 //在express中实现会话验证
 
+//用hashPW()对密码加密
 function hashPW(pwd){
 	return crypto.createHash('sha256').update(pwd).digest('base64').toString();
 }
@@ -56,15 +57,15 @@ app.get('/restricted' , function(req ,res ){
 	if(req.session.user){
 		res.send('<h2>'+ req.session.success + '</h2>' + 
 				'<p>You have entered the restriced section</p><br>' +
-				'<a href = "../logout.html">logout</a>');
+				'<a href = "/logout">logout</a>');
 	}else{
 		req.session.error = "Access denied!";
 		res.redirect('/login');
 	}
 });
 app.get('/logout' ,function(req ,res ){
-	req.session.destory(function () {
-		res.redirect('/public/login.html');
+	req.session.destroy(function(){
+		res.redirect('/login');
 	});
 });
 
@@ -78,11 +79,10 @@ app.get('/login' ,function (req ,res){
 });
 
 app.post('/login' ,function (req ,res ){
-	console.log(req.body);
 	var user = {
 		name : req.body.username,
 		password : hashPW("myPass")
-	}
+	};
 	if(user.password === hashPW(req.body.password.toString())){
 		req.session.regenerate(function(){
 			req.session.user = user;
@@ -91,10 +91,10 @@ app.post('/login' ,function (req ,res ){
 		})
 	}else{
 		req.session.regenerate(function(){
-			req.session.error = "Authentication failed.";console.log(req.session.error);
+			req.session.error = "Authentication failed.";
 			res.redirect('/restricted');
 		});
-		// res.redirect('/login');
+		res.redirect('/login');
 		
 	}
 });
